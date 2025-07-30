@@ -256,7 +256,7 @@ class Preprocessing(BaseEstimator, TransformerMixin):
 		cpm = counts.div(counts.sum(axis=1), 0)*1000000
 		cutoff = 10/(counts.sum(axis=1).min()/1000000)
 		min_samples = y.value_counts().min()
-
+		cpm = cpm.loc[:, self.genes]
 		filtered_genes = cpm.apply(self._filter, axis=0, cutoff=cutoff, sample_no=min_samples)
 		self.genes = list(filtered_genes.dropna().index)
 
@@ -300,7 +300,7 @@ class Preprocessing(BaseEstimator, TransformerMixin):
 		if self.gene_panel is not None:
 			self.filter_panel(counts)
 		# Update genes based on CPM cutoff
-		elif self.filter_genes:
+		if self.filter_genes:
 			self.filter_cpm(counts, y)
 
 		counts = counts[self.genes]
